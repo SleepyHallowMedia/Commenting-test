@@ -4,7 +4,15 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const SUPABASE_URL = Deno.env.get('SB_URL')!
 const SERVICE_ROLE_KEY = Deno.env.get('SB_SERVICE_ROLE_KEY')!
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY)
-function cors(res){ res.headers.set('Access-Control-Allow-Origin','*'); res.headers.set('Access-Control-Allow-Methods','POST, OPTIONS'); res.headers.set('Access-Control-Allow-Headers','content-type, authorization'); return res }
+function cors(res: Response) {
+  res.headers.set('Access-Control-Allow-Origin', '*')
+  res.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  res.headers.set(
+    'Access-Control-Allow-Headers',
+    'content-type, authorization, apikey, x-client-info, x-supabase-api-version'
+  )
+  return res
+}
 serve(async (req)=>{ if (req.method==='OPTIONS') return cors(new Response(null,{status:204}))
   try { const { page_id, body, author_name, fingerprint } = await req.json()
     if (!page_id || !body || typeof body !== 'string') return cors(new Response(JSON.stringify({ error:'Invalid payload' }), { status:400 }))
