@@ -15,11 +15,6 @@ export async function initComments(opts = {}) {
 
   root.innerHTML = `
     <div class="comments-card">
-      <div class="comments-row" id="auth-row">
-        <button id="login-btn" class="link">Sign in with GitHub</button>
-        <span id="user-label" class="count-badge"></span>
-        <button id="logout-btn" class="link" style="display:none">Sign out</button>
-      </div>
       <div id="composer" style="margin-top:12px">
         <div class="comments-row" style="margin-bottom:8px">
           <input id="author_name" class="name-input" placeholder="Name (optional)" />
@@ -44,9 +39,7 @@ export async function initComments(opts = {}) {
   `
 
   // === AUTH UI =====================================================
-  const loginBtn = document.getElementById('login-btn')
-  const logoutBtn = document.getElementById('logout-btn')
-  const userLabel = document.getElementById('user-label')
+
 
   async function updateAuthUI() {
     const result = await supabase.auth.getUser()
@@ -64,20 +57,7 @@ export async function initComments(opts = {}) {
     logoutBtn.style.display = user ? "inline-block" : "none"
   }
 
-  loginBtn.addEventListener('click', async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: { redirectTo: window.location.href }
-    })
-  })
 
-  logoutBtn.addEventListener('click', async () => {
-    await supabase.auth.signOut()
-    updateAuthUI()
-  })
-
-  supabase.auth.onAuthStateChange(updateAuthUI)
-  updateAuthUI()
 
   // === LOAD COMMENTS ===============================================
   async function loadComments() {
